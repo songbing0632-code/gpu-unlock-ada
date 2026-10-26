@@ -32,10 +32,9 @@ jobs:
             const branch = upstream.data.default_branch;
             const readme = await github.rest.repos.getContent({ owner: 'JustAResearcher', repo: 'gpu-unlock-ada', path: 'README.md', ref: branch });
             const text = Buffer.from(readme.data.content, 'base64').toString('utf8').toLowerCase();
-            const has4060 = /rtx 4060|10de:2882|ad107/.test(text);
-            const hasWindows = /windows/.test(text);
-            const hasMaturity = /stable|supported|release|production/.test(text);
-            if (!has4060 || !hasWindows || !hasMaturity) {
+            const hasWindows4060Pair = /(?:windows[\\s\\S]{0,300}(?:rtx 4060|10de:2882|ad107)|(?:rtx 4060|10de:2882|ad107)[\\s\\S]{0,300}windows)/.test(text);
+            const hasMaturity = /stable|production|supported on windows|windows support|release/.test(text);
+            if (!hasWindows4060Pair || !hasMaturity) {
               core.info('No Windows RTX 4060 maturity signal found.');
               return;
             }
